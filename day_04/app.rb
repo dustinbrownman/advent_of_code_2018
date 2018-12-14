@@ -72,3 +72,33 @@ sleepiest_minute = log_of_minutes_asleep.sort_by { |_minute, asleep_count| aslee
 
 
 puts biggest_sleeper.to_i * sleepiest_minute
+
+### PART 2 ###
+
+sleeping_by_minutes_stats = {}
+
+# Gather stats by minutes
+guard_sleep_log.each do |guard, sleep_log|
+    sleep_log.each do |minute, asleep_count|
+        guards_sleeping_record = Array(sleeping_by_minutes_stats[minute])
+        sorted_log = guards_sleeping_record.push([guard, asleep_count]).sort_by { |guard_id, count| count }
+
+        sleeping_by_minutes_stats[minute] = sorted_log
+    end
+end
+
+# Gather the sleepiest guard per minute
+minutes_with_best_sleepers = sleeping_by_minutes_stats.map do |minute, guards_asleep_log|
+    [minute, guards_asleep_log.last]
+end
+
+# Sort but the minute that had the guard that slept the most for that minute
+sorted_best_sleepers = minutes_with_best_sleepers.sort_by do |minute, (guard, asleep_count)|
+    asleep_count
+end
+
+# Get info about the guard
+minute, (guard_id, _sleep_count) = sorted_best_sleepers.last
+
+# Results!
+p minute * guard_id.to_i
